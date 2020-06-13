@@ -1,0 +1,3 @@
+requests2
+bs4
+pathlib
