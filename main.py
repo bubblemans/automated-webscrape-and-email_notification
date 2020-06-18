@@ -55,7 +55,7 @@ def send_notification():
                 print("Error message: ", e)
     
 
-# if analyze_data(get_data()):
-#     send_notification()
+if analyze_data(get_data()):
+    send_notification()
 
-send_notification()
+# send_notification()
