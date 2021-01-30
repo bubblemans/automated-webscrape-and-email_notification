@@ -1,7 +1,6 @@
 # automated-webscrape-and-email_notification
 
-Webscrape to recent US dollar value from Bank of Taiwan and send email notification if the point is low.
-
+This application is to use SMTP to send an email when US dollars drops sequentially.
 
 # Install
 ```bash
@@ -11,5 +10,5 @@ pip3 install -r requirements.txt
 
 # Usage
 ```bash
-python3 main.py
+python3 main.py --receiver receiver@gmail.com --sender sender@gmail.com --password password
 ```

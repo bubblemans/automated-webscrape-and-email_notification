@@ -1,12 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import requests
+import smtplib
+import argparse
+
 from bs4 import BeautifulSoup
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import smtplib
 from string import Template
 from pathlib import Path
+
+
+def _parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--sender', required=True, help='email address of the sender')
+    parser.add_argument('--receiver', required=True, help='email address of the receiver')
+    parser.add_argument('--password', required=True, help='email application password')
+    return parser.parse_args()
 
 
 def get_data():
@@ -38,31 +48,33 @@ def analyze_data(data):
 
 
 def send_notification():
-    with open("secret.txt", "r") as rf:
-        fr, to, password = rf.readlines()
+    args = _parse_args()
+    fr = args.sender
+    to = args.receiver
+    password = args.password
 
-        content = MIMEMultipart()
-        content["subject"] = "$$$ Dollar goes down! $$$"
-        content["from"] = fr.replace("\n", "")
-        content["to"] = to.replace("\n", "")
-        body = Template(Path("email.html").read_text())
-        content.attach(MIMEText(body.substitute({"user": "Alvin"}), "html"))
+    content = MIMEMultipart()
+    content["subject"] = "$$$ Dollar goes down! $$$"
+    content["from"] = fr.replace("\n", "")
+    content["to"] = to.replace("\n", "")
+    body = Template(Path("email.html").read_text())
+    content.attach(MIMEText(body.substitute({"user": "Alvin"}), "html"))
 
-        with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp:
-            try:
-                smtp.ehlo()
-                smtp.starttls()
-                smtp.login(fr.replace("\n", ""), password.replace("\n", ""))
-                smtp.send_message(content)
-                print("sent")
+    with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp:
+        try:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login(fr.replace("\n", ""), password.replace("\n", ""))
+            smtp.send_message(content)
+            print("sent")
 
-            except Exception as e:
-                print("Error message: ", e)
+        except Exception as e:
+            print("Error message: ", e)
 
 
 def main():
-    if analyze_data(get_data()):
-        send_notification()
+    # if analyze_data(get_data()):
+    send_notification()
 
 
 if __name__ == '__main__':
